@@ -1,0 +1,43 @@
+name: "Generate VEX with Kubescape"
+description: "Generate VEX with Kubescape"
+inputs:
+  deployment-file:
+    description: "Path / URL to the deployment file"
+    required: true
+  ready-condition:
+    description: "Condition to wait for before collecting VEX info"
+    required: true
+  wait-time:
+    description: "Time to wait (in seconds) before collecting VEX info, after the ready-condition is met"
+    default: "120"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup"
+      run: $GITHUB_ACTION_PATH/setup.sh
+      shell: bash
+    
+    - name: "Install deployment"
+      env: 
+        DEPLOYMENT_FILE: ${{ inputs.deployment-file }}
+        READY_CONDITION: ${{ inputs.ready-condition }}
+      run: $GITHUB_ACTION_PATH/install.sh
+      shell: bash
+
+    - name: "Wait for deployment to be ready"
+      env: 
+        WAIT_TIME: ${{ inputs.wait-time }}
+      run: $GITHUB_ACTION_PATH/wait.sh
+      shell: bash
+    
+    - name: "Generate VEX"
+      run: $GITHUB_ACTION_PATH/generate.sh
+      shell: bash
+    
+    - name: Upload VEX document
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: VEX document
+        path: vex.json
