@@ -9,7 +9,7 @@ inputs:
     required: true
   wait-time:
     description: "Time to wait (in seconds) before collecting VEX info, after the ready-condition is met"
-    default: "120"
+    default: "300"
 
 runs:
   using: "composite"

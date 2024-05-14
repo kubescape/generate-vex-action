@@ -1,0 +1,23 @@
+name: Self test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+    types: [labeled, synchronize, ready_for_review, opened, reopened]
+
+jobs:
+  generate_vex:
+    runs-on: ubuntu-latest
+    name: Test VEX Generation
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+    
+      - name: Test VEX Generation
+        uses: ./
+        with:
+          deployment-file: "https://k8s.io/examples/application/deployment.yaml"
+          ready-condition: "kubectl wait --for=condition=ready pod -l app=nginx --timeout=300s"
