@@ -1,0 +1,31 @@
+name: Self test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+    types: [labeled, synchronize, ready_for_review, opened, reopened]
+
+jobs:
+  generate_vex:
+    runs-on: ubuntu-latest
+    name: Test VEX Generation
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Checkout nginx helm chart
+        uses: actions/checkout@v4
+        with:
+          repository: helm/examples
+          path: charts/examples
+          ref: main
+    
+      - name: Test VEX Generation
+        uses: ./
+        with:
+          helm-chart-path: "charts/examples/charts/hello-world"
+          ready-condition: "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=hello-world --timeout=300s"
+          test-command: "self-test/test.sh"

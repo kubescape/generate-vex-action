@@ -1,0 +1,43 @@
+name: "Generate VEX with Kubescape"
+description: "Generate VEX with Kubescape"
+inputs:
+  helm-chart-path:
+    description: "Path to Helm chart to test"
+    required: true
+  ready-condition:
+    description: "Condition to wait for before collecting VEX info"
+    required: false
+  test-command:
+    description: "Command to run to test the deployment"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Setup"
+      run: $GITHUB_ACTION_PATH/setup.sh
+      shell: bash
+    
+    - name: "Install Helm Chart"
+      env: 
+        HELM_CHART_PATH: ${{ inputs.helm-chart-path }}
+        READY_CONDITION: ${{ inputs.ready-condition }}
+      run: $GITHUB_ACTION_PATH/install.sh
+      shell: bash
+
+    - name: "Run tests"
+      env:
+        TEST_COMMAND: ${{ inputs.test-command }}
+      run: $GITHUB_ACTION_PATH/test.sh
+      shell: bash
+    
+    - name: "Generate VEX"
+      run: $GITHUB_ACTION_PATH/generate.sh
+      shell: bash
+    
+    - name: Upload VEX document
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: VEX document
+        path: vex.json
