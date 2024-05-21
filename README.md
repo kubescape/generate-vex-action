@@ -41,5 +41,4 @@ To see an example of this Action in use, check out the [self test](./.github/wor
 
 ## Roadmap
 
-- Use https://github.com/helm/kind-action
 - Add signing of VEX documents
