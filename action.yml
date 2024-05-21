@@ -4,6 +4,10 @@ inputs:
   helm-chart-path:
     description: "Path to Helm chart to test"
     required: true
+  install-timeout:
+    description: "Timeout for Helm install"
+    default: "300s"
+    required: false
   namespace:
     description: "Namespace to deploy the Helm chart into"
     default: "tests"
@@ -30,9 +34,11 @@ runs:
       run: $GITHUB_ACTION_PATH/setup.sh
       shell: bash
     
+    # TODO: Take values variables or json as input
     - name: "Install Helm Chart"
-      env: 
+      env:
         HELM_CHART_PATH: ${{ inputs.helm-chart-path }}
+        INSTALL_TIMEOUT: ${{ inputs.install-timeout }}
         READY_CONDITION: ${{ inputs.ready-condition }}
         TESTS_NAMESPACE: ${{ inputs.namespace }}
       run: $GITHUB_ACTION_PATH/install.sh
