@@ -4,6 +4,10 @@ inputs:
   helm-chart-path:
     description: "Path to Helm chart to test"
     required: true
+  namespace:
+    description: "Namespace to deploy the Helm chart into"
+    default: "tests"
+    required: false
   ready-condition:
     description: "Condition to wait for before collecting VEX info"
     required: false
@@ -22,22 +26,26 @@ runs:
       env: 
         HELM_CHART_PATH: ${{ inputs.helm-chart-path }}
         READY_CONDITION: ${{ inputs.ready-condition }}
+        TESTS_NAMESPACE: ${{ inputs.namespace }}
       run: $GITHUB_ACTION_PATH/install.sh
       shell: bash
 
     - name: "Run tests"
       env:
         TEST_COMMAND: ${{ inputs.test-command }}
+        TESTS_NAMESPACE: ${{ inputs.namespace }}
       run: $GITHUB_ACTION_PATH/test.sh
       shell: bash
     
     - name: "Generate VEX"
       run: $GITHUB_ACTION_PATH/generate.sh
+      env:
+        TESTS_NAMESPACE: ${{ inputs.namespace }}
       shell: bash
     
     - name: Upload VEX document
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: VEX document
-        path: vex.json
+        name: VEX documents
+        path: out/*.json

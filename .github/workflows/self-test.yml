@@ -27,5 +27,6 @@ jobs:
         uses: ./
         with:
           helm-chart-path: "charts/examples/charts/hello-world"
-          ready-condition: "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=hello-world --timeout=300s"
+          namespace: "self-test"
+          ready-condition: "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=hello-world --timeout=300s -n self-test"
           test-command: "self-test/test.sh"

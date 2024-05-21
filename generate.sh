@@ -20,12 +20,39 @@ while [[ -z $(kubectl -n kubescape get openvulnerabilityexchangecontainers.spdx.
 done
 
 echo "Saving VEX results..."
-kubectl -n kubescape get openvulnerabilityexchangecontainer \
-    "$(kubectl -n kubescape get openvulnerabilityexchangecontainer -o jsonpath='{.items[0].metadata.name}')" \
-    -o jsonpath='{.spec}' > vex.json
+mkdir -p out
 
-echo "Affected:"
-jq "." vex.json | grep -c "\"affected\""
+# List available VEX documents
+vex_docs=$(kubectl get openvulnerabilityexchangecontainer -n kubescape -o jsonpath='{.items[*].metadata.name}')
 
-echo "Not affected:"
-jq "." vex.json | grep -c "\"not_affected\""
+# Iterate over the VEX documents and save them
+for doc in $vex_docs; do
+    # Get the full VEX document object
+    vex_object=$(kubectl -n kubescape get openvulnerabilityexchangecontainer "$doc" -o json)
+
+    # Check the labels to see if this VEX is for a workload in the TESTS_NAMESPACE
+    
+    workload_ns=$(jq -r ".metadata.labels[\"kubescape.io/workload-namespace\"]" <<< "$vex_object")
+    if [[ $workload_ns != "$TESTS_NAMESPACE" ]]; then
+        echo "Skipping VEX document $doc as it is not for the TESTS_NAMESPACE"
+        continue
+    fi
+
+    # Get the image name
+    image=$(jq -r ".metadata.labels[\"kubescape.io/image-id\"]" <<< "$vex_object")
+
+    # # Save the VEX document (the .spec portion) to a file
+    jq ".spec" <<< "$vex_object" > out/"$image".json
+
+    echo "Affected:"
+    jq "." out/"$image".json | grep -c "\"affected\""
+
+    echo "Not affected:"
+    jq "." out/"$image".json | grep -c "\"not_affected\""
+done
+
+# Check if there are any VEX documents saved
+if [[ -z $(ls out) ]]; then
+    echo "No VEX documents saved. Exiting..."
+    exit 1
+fi
