@@ -11,6 +11,10 @@ artifact.
 
 - `helm-chart-path`: (Required) The path to the Helm chart that you want to
   test.
+- `install-timeout`: (Optional) The amount of time to wait for the Helm chart
+  to install. If omitted, the timeout will be set to 300 seconds.
+- `namespace`: (Optional) The namespace that the Helm chart should be deployed
+  to. If omitted, the namespace will be set to `tests`.
 - `ready-condition`: (Optional) A condition that the action should wait for
   before collecting VEX information.
 - `test-command`: (Optional) The command that should be run to test the
@@ -26,7 +30,9 @@ To use this action in your workflow, include it in your workflow file with the r
 - uses: slashben/generate-vex-action@v1
   with:
     helm-chart-path: './path/to/your/chart' # Ex. './charts/hello-world'
-    ready-condition: 'your-condition' # Ex. `kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=hello-world --timeout=300s`
+    install-timeout: '300s' # This is the default value
+    namespace: 'tests' # This is the default value
+    ready-condition: 'your-condition' # Ex. `kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=hello-world --timeout=300s -n tests`
     test-command: 'your-test-command' # Ex. `./ci/test_integration.sh`
 ```
 
@@ -35,3 +41,8 @@ Replace `your-org/generate-vex-with-kubescape@v1` with the actual repository and
 ## Example
 
 To see an example of this Action in use, check out the [self test](./.github/workflows/self-test.yml) workflow in this repository.
+
+## Roadmap
+
+- Take helm chart values as input
+- Add signing of VEX documents
