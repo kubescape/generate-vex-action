@@ -2,6 +2,7 @@
 
 # Wait the nodeAgent.config.updatePeriod used when installing the Kubescape helm chart.
 # This ensures that the VEX documents are updated with the latest usage data.
+echo "Waiting for VEX generation..."
 sleep 60
 
 # Now attempt to retrieve the VEX documents
@@ -48,11 +49,10 @@ for doc in $vex_docs; do
     # # Save the VEX document (the .spec portion) to a file
     jq ".spec" <<< "$vex_object" > out/"$image".json
 
-    echo "Affected:"
-    jq "." out/"$image".json | grep -c "\"affected\""
+    count_affected=$(jq "." out/"$image".json | grep -c "\"affected\"")
+    count_not_affected=$(jq "." out/"$image".json | grep -c "\"not_affected\"")
 
-    echo "Not affected:"
-    jq "." out/"$image".json | grep -c "\"not_affected\""
+    echo "Saved VEX document for $image. $count_affected issues affected, $count_not_affected not affected."
 done
 
 # Check if there are any VEX documents saved
