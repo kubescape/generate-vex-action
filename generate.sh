@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -x
 
+# Wait the nodeAgent.config.updatePeriod used when installing the Kubescape helm chart.
+# This ensures that the VEX documents are updated with the latest usage data.
+sleep 60
+
+# Now attempt to retrieve the VEX documents
 timeout=300
 start_time=$SECONDS
 while [[ -z $(kubectl -n kubescape get openvulnerabilityexchangecontainers.spdx.softwarecomposition.kubescape.io) ]]; do
