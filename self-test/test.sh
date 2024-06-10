@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 
 # Get the pod name and container port of the test application
 POD_NAME=$(kubectl -n self-test get pods -l "app.kubernetes.io/name=hello-world" -o jsonpath="{.items[0].metadata.name}")

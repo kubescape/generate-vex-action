@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 
 # Wait the nodeAgent.config.updatePeriod used when installing the Kubescape helm chart.
 # This ensures that the VEX documents are updated with the latest usage data.

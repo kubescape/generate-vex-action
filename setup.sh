@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 
 # Install Kubescape
 helm repo add kubescape https://kubescape.github.io/helm-charts/
