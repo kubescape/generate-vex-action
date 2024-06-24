@@ -1,3 +1,6 @@
+[![GitHub](https://img.shields.io/github/license/kubescape/generate-vex-action)](https://github.com/kubescape/generate-vex-action/blob/master/LICENSE)
+[![Slack](https://img.shields.io/badge/slack-kubescape-blueviolet?logo=slack)](https://cloud-native.slack.com/archives/C04EY3ZF9GE)
+
 # Generate VEX with Kubescape GitHub Action
 
 This GitHub Action is designed to generate a VEX (Vulnerability Exploitability
@@ -27,22 +30,19 @@ artifact.
 To use this action in your workflow, include it in your workflow file with the required inputs:
 
 ```yaml
-- uses: slashben/generate-vex-action@v1
+- uses: kubescape/generate-vex-action
   with:
     helm-chart-path: './path/to/your/chart' # Ex. './charts/hello-world'
     install-timeout: '300s' # This is the default value
     namespace: 'tests' # This is the default value
-    ready-condition: 'your-condition' # Ex. `kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=hello-world --timeout=300s -n tests`
-    test-command: 'your-test-command' # Ex. `./ci/test_integration.sh`
+    ready-condition: 'your-condition' # Optional. Ex. `kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=hello-world --timeout=300s -n tests`
+    test-command: 'your-test-command' # Optional. Ex. `./ci/test_integration.sh`
 ```
-
-Replace `your-org/generate-vex-with-kubescape@v1` with the actual repository and version of the action. Replace the values of `helm-chart-path`, `ready-condition`, and `test-command` with your actual values.
 
 ## Example
 
 To see an example of this Action in use, check out the [self test](./.github/workflows/self-test.yml) workflow in this repository.
 
-## Roadmap
+## Contributing
 
-- Take helm chart values as input
-- Add signing of VEX documents
+We welcome contributions to this project. If you want to get involved with the project, take a look at the [Contributing](./CONTRIBUTING.md) guide.
